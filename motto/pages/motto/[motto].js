@@ -1,14 +1,8 @@
 import { useRouter } from "next/router";
-import {
-  Container,
-  Typography,
-  Button,
-  AppBar,
-  Toolbar,
-  Card,
-  CardContent,
-} from "@mui/material";
+import { useState } from "react";
+import { Container, Typography, Button, TextField, List, ListItem, Paper } from "@mui/material";
 import Link from "next/link";
+import Navbar from "../../components/Navbar";
 
 const mottos = [
   {
@@ -39,42 +33,65 @@ export default function MottoItem() {
 
   const selectedMotto = mottos[motto];
 
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+    if (commentText.trim()) {
+      const newComment = {
+        text: commentText,
+        date: new Date().toLocaleString(),
+      };
+      setComments([...comments, newComment]);
+      setCommentText("");
+    }
+  };
+
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" style={{ flexGrow: 1 }}>
-            Motto App
-          </Typography>
-          <Button color="inherit" component={Link} href="/">
-            Home
-          </Button>
-          <Button color="inherit" component={Link} href="/about">
-            About
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <Container
-        maxWidth="sm"
-        style={{ textAlign: "center", marginTop: "50px" }}
-      >
-        <Card variant="outlined" style={{ marginTop: "20px" }}>
-          <CardContent>
-            <Typography variant="h2" component="h1" gutterBottom>
-              {selectedMotto.text}
-            </Typography>
-            <Typography variant="body1" paragraph>
-              {selectedMotto.story}
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => router.push("/")}
-            >
-              Back to Mottos
+      <Navbar />
+      <Container maxWidth="sm" style={{ textAlign: "center", marginTop: "70px" }}>
+        <Typography variant="h2" component="h1" gutterBottom>
+          {selectedMotto.text}
+        </Typography>
+        <Typography variant="body1" paragraph>
+          {selectedMotto.story}
+        </Typography>
+
+        <Typography variant="h5" gutterBottom style={{ marginTop: "20px", fontWeight: "bold" }}>
+          Comments
+        </Typography>
+        <Paper elevation={3} style={{ padding: "20px", marginBottom: "20px" }}>
+          <form onSubmit={handleCommentSubmit}>
+            <TextField
+              label="Add a comment"
+              variant="outlined"
+              fullWidth
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              style={{ marginBottom: "10px" }}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Submit
             </Button>
-          </CardContent>
-        </Card>
+          </form>
+        </Paper>
+        <List>
+          {comments.map((comment, index) => (
+            <ListItem key={index} style={{ justifyContent: "center" }}>
+              <Typography variant="body2" style={{ padding: "5px 0", backgroundColor: "#f5f5f5", borderRadius: "5px", padding: "10px", width: "100%", textAlign: "left" }}>
+                <span style={{ fontSize: "0.8em", color: "gray" }}>{comment.date}</span>
+                <br />
+                {comment.text}
+              </Typography>
+            </ListItem>
+          ))}
+        </List>
+
+        <Button variant="contained" color="primary" onClick={() => router.push("/")}>
+          Back to Mottos
+        </Button>
       </Container>
     </>
   );
