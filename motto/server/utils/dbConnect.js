@@ -1,12 +1,8 @@
 import mongoose from 'mongoose';
 
-// const MONGODB_URI = process.env.MONGODB_URI; // Use environment variable for the connection string
-const MONGODB_URI="mongodb+srv://Space:GgatcmaAFi6ql9pB@cluster0.4n1zphr.mongodb.net/mottos?retryWrites=true&w=majority"
-
+const MONGODB_URI = process.env.MONGODB_URI; // Use environment variable for the connection string
 if (!MONGODB_URI) {
     throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}else{
-    console.log('abcd...')
 }
 
 let cached = global.mongo;

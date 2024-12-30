@@ -129,13 +129,13 @@ export async function getServerSideProps(context) {
 
   // Fetch the specific motto by ID
   const mottoRes = await fetch(
-    `http://localhost:3001/api/mottos?mottoId=${mottoId}`
+    `${process.env.API_URL}/mottos?mottoId=${mottoId}`
   );
   const initialMotto = await mottoRes.json();
 
   // Fetch comments for the specific mottoId
   const commentsRes = await fetch(
-    `http://localhost:3001/api/comments?mottoId=${mottoId}`
+    `${process.env.API_URL}/comments?mottoId=${mottoId}`
   );
 
   if (!commentsRes.ok) {

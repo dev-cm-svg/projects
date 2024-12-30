@@ -14,26 +14,17 @@ import Navbar from "../components/Navbar";
 import { useMottos } from "../context/MottoContext";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp"; // Import the ThumbUpIcon
 
-const Home = ({ initialMottos }) => {
+const Home = ({ initialMottos, apiUrl }) => {
+  console.log(initialMottos,'initialMottos...')
   const [text, setText] = useState("");
   const [story, setStory] = useState("");
-  const { mottos, setMottos } = useMottos(); // Use the context
   const [likes, setLikes] = useState({}); // State to track if the user has liked the motto
-
+  const [mottos, setMottos] = useState(initialMottos);
   useEffect(() => {
-    const fetchMottos = async () => {
-      const res = await fetch("http://localhost:3001/api/mottos");
-      const data = await res.json();
-      setMottos(data); // Store mottos in context
-    };
-
-    if (mottos.length === 0) {
-      // Fetch only if mottos are not already loaded
-      fetchMottos();
-    }
-
-    setLikes(JSON.parse(localStorage.getItem("likedMottos")) || {});
-  }, [mottos, setMottos]);
+    // Retrieve liked mottos from localStorage
+    const likedMottos = JSON.parse(localStorage.getItem('likedMottos')) || {};
+    setLikes(likedMottos); // Set the initial state from localStorage
+}, []); // Empty dependency array means this runs once on mount
 
   const handleLikeToggle = async (mottoId) => {
     if (likes[mottoId]) {
@@ -50,7 +41,7 @@ const Home = ({ initialMottos }) => {
       ); // Save updated likedMottos
     }
     const res = await fetch(
-      `http://localhost:3001/api/mottos?mottoId=${mottoId}&like=${
+      `${apiUrl}/mottos?mottoId=${mottoId}&like=${
         likes[mottoId] ? false : true
       }`,
       {
@@ -60,7 +51,7 @@ const Home = ({ initialMottos }) => {
 
     if (res.ok) {
       const allMottos = await res.json();
-      setMottos(allMottos);
+      setMottos([...allMottos]);
     } else {
       console.error("Error liking motto");
     }
@@ -74,7 +65,7 @@ const Home = ({ initialMottos }) => {
       story,
     };
 
-    const response = await fetch("/api/mottos", {
+    const response = await fetch(`${apiUrl}/mottos`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -158,26 +149,29 @@ const Home = ({ initialMottos }) => {
   );
 };
 
-// export async function getServerSideProps() {
-//   try {
-//     const res = await fetch("http://localhost:3001/api/mottos");
-//     if (!res.ok) {
-//       throw new Error("Failed to fetch");
-//     }
-//     const initialMottos = await res.json();
-//     return {
-//       props: {
-//         initialMottos,
-//       },
-//     };
-//   } catch (error) {
-//     console.error("Error fetching mottos:", error);
-//     return {
-//       props: {
-//         initialMottos: [],
-//       },
-//     };
-//   }
-// }
+export async function getServerSideProps() {
+  try {
+    console.log(process.env.API_URL,'apiUrl...')
+    const res = await fetch(`${process.env.API_URL}/mottos`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch");
+    }
+    const initialMottos = await res.json();
+    return {
+      props: {
+        initialMottos,
+        apiUrl: process.env.API_URL,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching mottos:", error);
+    return {
+      props: {
+        initialMottos: [],
+        apiUrl: process.env.API_URL,
+      },
+    };
+  }
+}
 
 export default Home;
