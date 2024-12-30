@@ -7,27 +7,64 @@ import {
   TextField,
   List,
   ListItem,
+  IconButton,
 } from "@mui/material";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import { useMottos } from "../context/MottoContext";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp"; // Import the ThumbUpIcon
 
 const Home = ({ initialMottos }) => {
   const [text, setText] = useState("");
   const [story, setStory] = useState("");
   const { mottos, setMottos } = useMottos(); // Use the context
+  const [likes, setLikes] = useState({}); // State to track if the user has liked the motto
 
   useEffect(() => {
     const fetchMottos = async () => {
-        const res = await fetch('http://localhost:3001/api/mottos');
-        const data = await res.json();
-        setMottos(data); // Store mottos in context
+      const res = await fetch("http://localhost:3001/api/mottos");
+      const data = await res.json();
+      setMottos(data); // Store mottos in context
     };
 
-    if (mottos.length === 0) { // Fetch only if mottos are not already loaded
-        fetchMottos();
+    if (mottos.length === 0) {
+      // Fetch only if mottos are not already loaded
+      fetchMottos();
     }
-}, [mottos, setMottos]);
+
+    setLikes(JSON.parse(localStorage.getItem("likedMottos")) || {});
+  }, [mottos, setMottos]);
+
+  const handleLikeToggle = async (mottoId) => {
+    if (likes[mottoId]) {
+      setLikes({ ...likes, [mottoId]: false });
+      localStorage.setItem(
+        "likedMottos",
+        JSON.stringify({ ...likes, [mottoId]: false })
+      ); // Save updated likedMottos
+    } else {
+      setLikes({ ...likes, [mottoId]: true });
+      localStorage.setItem(
+        "likedMottos",
+        JSON.stringify({ ...likes, [mottoId]: true })
+      ); // Save updated likedMottos
+    }
+    const res = await fetch(
+      `http://localhost:3001/api/mottos?mottoId=${mottoId}&like=${
+        likes[mottoId] ? false : true
+      }`,
+      {
+        method: "PATCH",
+      }
+    );
+
+    if (res.ok) {
+      const allMottos = await res.json();
+      setMottos(allMottos);
+    } else {
+      console.error("Error liking motto");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,16 +100,22 @@ const Home = ({ initialMottos }) => {
         <Typography variant="h2">My Mottos</Typography>
         <form onSubmit={handleSubmit}>
           <TextField
-            label="Motto"
+            label="Motto Text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             required
+            fullWidth
+            margin="normal"
           />
           <TextField
             label="Story"
             value={story}
             onChange={(e) => setStory(e.target.value)}
             required
+            multiline // Enable multiline
+            rows={4} // Set the number of visible rows
+            fullWidth
+            margin="normal"
           />
           <Button type="submit">Add Motto</Button>
         </form>
@@ -86,27 +129,27 @@ const Home = ({ initialMottos }) => {
                 alignItems: "center",
               }}
             >
-              
               <Link href={`/motto/${motto.id}`} passHref>
-
                 <Typography
                   variant="body1"
                   sx={{
                     "&:hover": {
                       color: "primary.main",
-                      textDecoration: "underline",
                     },
                   }}
                 >
                   {motto.text}
                 </Typography>
               </Link>
-              {/* <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <IconButton onClick={() => handleLike(motto.id)}>
-                                    <ThumbUpIcon />
-                                </IconButton>
-                                <Typography variant="body2">{likes[motto.id]}</Typography>
-                            </div> */}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <IconButton
+                  onClick={() => handleLikeToggle(motto.id)}
+                  color={likes[motto.id] ? "secondary" : "default"} // Change color based on like status
+                >
+                  <ThumbUpIcon />
+                </IconButton>
+                <Typography variant="body2">{motto.likes}</Typography>
+              </div>
             </ListItem>
           ))}
         </List>
