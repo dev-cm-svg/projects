@@ -1,3 +1,4 @@
-node_modules/
-.next
 .vercel
+.next
+node_modules/
+package-lock.json
