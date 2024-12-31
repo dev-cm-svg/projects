@@ -1,23 +1,12 @@
 import { Container, Typography, Button, AppBar, Toolbar } from '@mui/material';
 import Link from 'next/link';
+import Navbar from '../components/Navbar';
 
 export default function About() {
     return (
         <>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography variant="h6" style={{ flexGrow: 1 }}>
-                        Motto App
-                    </Typography>
-                    <Button color="inherit" component={Link} href="/">
-                        Home
-                    </Button>
-                    <Button color="inherit" component={Link} href="/about">
-                        About
-                    </Button>
-                </Toolbar>
-            </AppBar>
-            <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '50px' }}>
+           <Navbar/>
+            <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '80px' }}>
                 <Typography variant="h2" component="h1" gutterBottom>
                     About This App
                 </Typography>
