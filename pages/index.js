@@ -154,6 +154,7 @@ export async function getServerSideProps() {
   try {
     console.log(process.env.API_URL,'apiUrl...')
     const res = await fetch(`${process.env.API_URL}/mottos`);
+    console.log(res,'res...')
     if (!res.ok) {
       throw new Error("Failed to fetch");
     }
