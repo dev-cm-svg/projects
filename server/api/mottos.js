@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   await dbConnect(); // Connect to the database
   {
     res.setHeader('Access-Control-Allow-Origin', '*'); // Adjust origin as needed
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS'); // Or other methods you allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS,POST,PATCH'); // Or other methods you allow
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Or other headers
     res.setHeader('x-robots-tag', 'noindex');
     res.status(200).end(); // Respond with 200 OK for preflight

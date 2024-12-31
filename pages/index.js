@@ -15,7 +15,7 @@ import { useMottos } from "../context/MottoContext";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp"; // Import the ThumbUpIcon
 
 const Home = ({ initialMottos, apiUrl }) => {
-  console.log(initialMottos,'initialMottos...12345')
+  console.log(initialMottos,'initialMottos...12')
   const [text, setText] = useState("");
   const [story, setStory] = useState("");
   const [likes, setLikes] = useState({}); // State to track if the user has liked the motto
