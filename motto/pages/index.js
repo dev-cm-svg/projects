@@ -21,6 +21,7 @@ const Home = ({ initialMottos, apiUrl }) => {
   const [likes, setLikes] = useState({}); // State to track if the user has liked the motto
   const [mottos, setMottos] = useState(initialMottos);
   useEffect(() => {
+    console.log('useEffect...123')
     // Retrieve liked mottos from localStorage
     const likedMottos = JSON.parse(localStorage.getItem('likedMottos')) || {};
     setLikes(likedMottos); // Set the initial state from localStorage
