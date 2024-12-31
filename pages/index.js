@@ -121,7 +121,7 @@ const Home = ({ initialMottos, apiUrl }) => {
                 alignItems: "center",
               }}
             >
-              <Link href={`/motto/${motto.id}`} passHref>
+              <Link href={`/motto/${motto.id}`} passHref  style={{ textDecoration: 'none' }}>
                 <Typography
                   variant="body1"
                   sx={{
