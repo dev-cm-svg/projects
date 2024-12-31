@@ -3,7 +3,13 @@ import Motto from "../models/Motto"; // Import the Motto model
 
 export default async function handler(req, res) {
   await dbConnect(); // Connect to the database
-
+  {
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Adjust origin as needed
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS'); // Or other methods you allow
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Or other headers
+    res.setHeader('x-robots-tag', 'noindex');
+    res.status(200).end(); // Respond with 200 OK for preflight
+} 
   if (req.method === "GET") {
     try {
       // Check if a mottoId is provided in the query parameters
@@ -34,6 +40,7 @@ export default async function handler(req, res) {
       res.status(500).json({ error: "Failed to save motto" });
     }
   } else if (req.method === "PATCH") {
+
     try {
       const { mottoId, like } = req.query; // Get mottoId from the query parameters
       const motto = (await Motto.find({id:mottoId}))[0];
